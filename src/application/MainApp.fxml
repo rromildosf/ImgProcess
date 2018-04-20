@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="486.0" prefWidth="770.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
+   <children>
+      <MenuBar fx:id="mainWindow">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+                  <MenuItem fx:id="openImagesItem" mnemonicParsing="false" onAction="#openImageAction" text="Open Image[s]" />
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+                  <MenuItem fx:id="redoMenuItem" mnemonicParsing="false" onAction="#onRedo" text="Redo">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Y" control="ANY" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="undoMenuItem" onAction="#onUndo" text="Undo">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Z" control="ANY" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Filters">
+              <items>
+                <MenuItem fx:id="convertToMono" mnemonicParsing="false" onAction="#convertToMono" text="Convert to Mono" />
+                  <MenuItem fx:id="rgbItem" mnemonicParsing="false" onAction="#onRGBItemAction" text="RGB Channels" />
+                  <MenuItem fx:id="negativeMenuItem" mnemonicParsing="false" onAction="#onNegative" text="Negative" />
+              </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <SplitPane fx:id="mainSplit" dividerPositions="0.24348958333333334" prefHeight="428.0" prefWidth="770.0" VBox.vgrow="ALWAYS">
+        <items>
+            <VBox prefHeight="200.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
+               <children>
+                  <Button mnemonicParsing="false" text="Convert To Mono" />
+                  <CheckBox fx:id="_red" mnemonicParsing="false" onAction="#onRGBItemAction" text="Red" />
+                  <CheckBox fx:id="_green" mnemonicParsing="false" onAction="#onRGBItemAction" text="Green" />
+                  <CheckBox fx:id="_blue" mnemonicParsing="false" onAction="#onRGBItemAction" text="Blue" />
+               </children>
+            </VBox>
+            <VBox fx:id="imageBox">
+               <children>
+                  <SplitPane fx:id="splitPane" dividerPositions="0.29797979797979796" prefHeight="438.0" prefWidth="536.0" VBox.vgrow="ALWAYS">
+                    <items>
+                      <AnchorPane fx:id="leftPane" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                           <children>
+                              <Slider fx:id="_slider" blockIncrement="5.0" layoutX="14.0" layoutY="75.0" max="255.0" orientation="VERTICAL" prefHeight="228.0" prefWidth="16.0" showTickLabels="true" showTickMarks="true" />
+                           </children>
+                        </AnchorPane>
+                        <ScrollPane fitToHeight="true" fitToWidth="true">
+                          <content>
+                            <AnchorPane fx:id="rightPane" minHeight="-Infinity" minWidth="-Infinity">
+                                 <children>
+                                    <Canvas fx:id="canvas" height="387.0" style="-fx-fill: #111111;" width="346.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                          </content>
+                        </ScrollPane>
+                    </items>
+                  </SplitPane>
+                <AnchorPane id="statusPane" fx:id="statusPane" minHeight="0.0" minWidth="0.0" prefHeight="30.0" />
+               </children>
+            </VBox>
+        </items>
+      </SplitPane>
+   </children>
+</VBox>
