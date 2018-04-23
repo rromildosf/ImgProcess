@@ -22,14 +22,14 @@ public class YIQFilter {
 //			System.out.println();
 			for( int j = 0; j < image.getHeight(); j++ ) {
 				c = pr.getColor(n, j);
-				r = (int)(c.getRed() * 255)%255;
-				g = (int)(c.getGreen() * 255)%255;
-				b = (int)(c.getBlue() * 255)%255;
+				r = (int)(c.getRed() * 255);
+				g = (int)(c.getGreen() * 255);
+				b = (int)(c.getBlue() * 255);
 				
 //				System.out.print("[R,G,B] = ["+ r + ", "+ g + ", "+b +"]  \n");
 
 				
-				double y = this.getY(r, g, b),
+				double 	y = this.getY(r, g, b),
 						i = this.getI(r, g, b),
 						q = this.getQ(r, g, b);
 				
@@ -38,11 +38,15 @@ public class YIQFilter {
 				}
 				else y *= value;
 				
-				r = ((int)this.getR(y, i, q))%255;
-				g = ((int)this.getG(y, i, q))%255;
-				b = ((int)this.getB(y, i, q))%255;
+				r = ((int)this.getR(y, i, q));
+				g = ((int)this.getG(y, i, q));
+				b = ((int)this.getB(y, i, q));
 				
-				System.out.println("[R,G,B] = ["+ r + ", "+ g + ", "+b +"]  \n");
+				r = r > 255 ? 255 : r;
+				g = g > 255 ? 255 : g;
+				b = b > 255 ? 255 : b;
+				
+//				System.out.println("[R,G,B] = ["+ r + ", "+ g + ", "+b +"]  \n");
 				
 				pw.setColor( n, j, Color.rgb( r, g, b ) );
 			}

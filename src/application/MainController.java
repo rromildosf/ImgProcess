@@ -12,6 +12,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -70,8 +71,16 @@ public class MainController {
         
         _slider.valueProperty().addListener( 
         		(obs, oldValue, newValue) -> this.onChange((double)newValue) );
+        
+        zoomSlider.valueProperty().addListener((obs, oldValue, newValue) -> this.zoomChange((double)newValue ) );
     }
     
+    
+    private void zoomChange( double zoom ) {
+    	System.out.println(zoom * 100);
+    	this.utils.zoomChange(zoom);
+    	
+    }
     private void setAnchor() {
     	double rl = (rightPane.getWidth() - canvas.getWidth())/2;
     	double tb = (rightPane.getHeight() - canvas.getHeight() )/2;
@@ -103,6 +112,9 @@ public class MainController {
     	);    	
     }
     
+    @FXML
+    private Slider zoomSlider;
+    
     /* REDO and UNDO */
     
     @FXML
@@ -121,6 +133,7 @@ public class MainController {
     	utils.undo();
     }
     
+    
     /* REDO and UNDO -- END*/
     
     @FXML
@@ -135,13 +148,60 @@ public class MainController {
     /* Negative */
     
     @FXML
-    private MenuItem negativeMenuItem;
+    private MenuItem negativeInRGB;
     
     @FXML
     void onNegative() {
-    	System.out.println("on negative");
-    	utils.negative();
+    	utils.negative( true );
+    }
+    
+    @FXML
+    private MenuItem negativeInY;
+    
+    @FXML
+    void onNegativeY() {
+    	utils.negative( false );
     }
     /* Negative -- END */
+    
+    
+    /* Apply norm */
+    @FXML
+    private Button normBtn;
+    
+    @FXML
+    void applyNorm() {
+    	utils.applyNorm(true);
+    }
+    @FXML
+    private Button notNormBtn;
+    
+    @FXML
+    void notNorm() {
+    	utils.applyNorm(false);
+    }
+    
+    /* --- File MENU --- */
+    
+    @FXML
+    private MenuItem saveMenuItem;
+
+    @FXML
+    private MenuItem saveAsMenuItem;
+    
+    
+    @FXML
+    void save() {
+    	System.out.println("Save");
+    	this.utils.saveImage();
+    }
+
+    @FXML
+    void saveAs() {
+    	System.out.println("Save As");
+    }
+
+    
+    
     
 }

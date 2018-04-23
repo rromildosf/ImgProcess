@@ -1,2 +1,2 @@
 # ImgProcess
-Project for Tópicos especiais em Programação I
+Projeto para cadeira de Tópicos especiais em Programação I.

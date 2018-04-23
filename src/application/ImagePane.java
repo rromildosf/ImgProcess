@@ -9,29 +9,39 @@ import javafx.scene.paint.Color;
 public class ImagePane {
 	private Canvas canvas;
 	private GraphicsContext gc;
-	private ImageUtils utils;
+	private ImageUtils imageUtils;
 	private StackRedoUndo stack;
 	private boolean updateStack = true;
+	
+	/* Fixed value don't use to get canvas width or height */
+	private double CANVAS_WIDTH = 400;
+	private double CANVAS_HEIGHT = 300;
 	
 	public ImagePane( Canvas canvas ) {
 		this.setCanvas(canvas);
 		
 		this.gc = canvas.getGraphicsContext2D();
-		gc.setFill( Color.BLUE );
-		gc.fillRoundRect(10, 10, canvas.getWidth(), canvas.getHeight(), 0, 0);
 		stack = new StackRedoUndo();
-			
 	}
 	public void setImageUtils( ImageUtils utils ) {
-		this.utils = utils;
-		this.update();
+		this.imageUtils = utils;
+		
+		double prop = CANVAS_WIDTH / imageUtils.width;
+		CANVAS_HEIGHT = imageUtils.height * prop;		
+		
+		this.setCanvasZoom(1.0);
 	}
 	public void update() {
 		
-		double h;
-		h = utils.height * canvas.getWidth()/utils.width;
+		gc.setFill( Color.BLUE );
+		gc.fillRoundRect(10, 10, canvas.getWidth(), canvas.getHeight(), 0, 0);
 		
-		WritableImage image = (WritableImage)utils.getImage();
+		if( imageUtils == null || imageUtils.width == 0 ) return;
+		
+		double h;
+		h = imageUtils.height * canvas.getWidth()/imageUtils.width;
+		
+		WritableImage image = (WritableImage)imageUtils.getImage();
 		gc.drawImage( image, 0.0, 0.0, canvas.getWidth(), h );
 		
 		if(updateStack) {
@@ -48,18 +58,25 @@ public class ImagePane {
 	public Canvas getCanvas() {
 		return canvas;
 	}
+	
+	public ImagePane setCanvasZoom( double zoom ) {
+		this.canvas.setWidth( this.CANVAS_WIDTH * zoom );
+		this.canvas.setHeight( this.CANVAS_HEIGHT * zoom );
+		this.update();
+		return this;
+	}
 
 	public void setCanvas(Canvas canvas) {
 		this.canvas = canvas;
 	}
 	
 	public void undo() {
-		this.utils.setImage( this.stack.undo() );
+		this.imageUtils.setImage( this.stack.undo() );
 		updateStack = false;
 		this.update();
 	}
 	public void redo() {
-		this.utils.setImage( this.stack.redo() );
+		this.imageUtils.setImage( this.stack.redo() );
 		updateStack = false;
 		this.update();
 	}

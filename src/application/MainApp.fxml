@@ -19,8 +19,20 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem fx:id="openImagesItem" mnemonicParsing="false" onAction="#openImageAction" text="Open Image[s]" />
-              <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem fx:id="openImagesItem" mnemonicParsing="false" onAction="#openImageAction" text="Open Image[s]">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="O" control="ANY" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#save" text="Save">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="ANY" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" onAction="#saveAs" text="Save As" />
+              <MenuItem mnemonicParsing="false" text="Close">
+                     <accelerator>
+                        <KeyCodeCombination alt="ANY" code="F4" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
@@ -42,7 +54,12 @@
               <items>
                 <MenuItem fx:id="convertToMono" mnemonicParsing="false" onAction="#convertToMono" text="Convert to Mono" />
                   <MenuItem fx:id="rgbItem" mnemonicParsing="false" onAction="#onRGBItemAction" text="RGB Channels" />
-                  <MenuItem fx:id="negativeMenuItem" mnemonicParsing="false" onAction="#onNegative" text="Negative" />
+                  <Menu mnemonicParsing="false" text="Negative">
+                    <items>
+                      <MenuItem fx:id="negativeInRGB" mnemonicParsing="false" onAction="#onNegative" text="Negative in RGB" />
+                        <MenuItem fx:id="negativeInY" mnemonicParsing="false" onAction="#onNegativeY" text="Negative in Y" />
+                    </items>
+                  </Menu>
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">
@@ -56,7 +73,8 @@
         <items>
             <VBox prefHeight="200.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
                <children>
-                  <Button mnemonicParsing="false" text="Convert To Mono" />
+                  <Button fx:id="normBtn" mnemonicParsing="false" onAction="#applyNorm" prefHeight="25.0" prefWidth="100.0" text="Apply Norm" />
+                  <Button fx:id="notNormBtn" mnemonicParsing="false" onAction="#notNorm" text="Apply -Norm" />
                   <CheckBox fx:id="_red" mnemonicParsing="false" onAction="#onRGBItemAction" text="Red" />
                   <CheckBox fx:id="_green" mnemonicParsing="false" onAction="#onRGBItemAction" text="Green" />
                   <CheckBox fx:id="_blue" mnemonicParsing="false" onAction="#onRGBItemAction" text="Blue" />
@@ -82,7 +100,10 @@
                         </ScrollPane>
                     </items>
                   </SplitPane>
-                <AnchorPane id="statusPane" fx:id="statusPane" minHeight="0.0" minWidth="0.0" prefHeight="30.0" />
+                <AnchorPane id="statusPane" fx:id="statusPane" minHeight="0.0" minWidth="0.0" prefHeight="30.0">
+                     <children>
+                        <Slider fx:id="zoomSlider" blockIncrement="0.1" layoutX="431.0" layoutY="4.0" max="10.0" min="0.05" scaleShape="false" value="1.0" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="4.0" />
+                     </children></AnchorPane>
                </children>
             </VBox>
         </items>
