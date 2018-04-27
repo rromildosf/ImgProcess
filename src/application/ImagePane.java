@@ -23,13 +23,24 @@ public class ImagePane {
 		this.gc = canvas.getGraphicsContext2D();
 		stack = new StackRedoUndo();
 	}
-	public void setImageUtils( ImageUtils utils ) {
+	
+	public ImagePane( WritableImage image ) {
+		this( new Canvas() );
+		this.setImageUtils( new ImageUtils( image ) );
+	}
+	
+	public ImageUtils getImageUtils() {
+		return this.imageUtils;
+	}
+	
+	public ImagePane setImageUtils( ImageUtils utils ) {
 		this.imageUtils = utils;
 		
 		double prop = CANVAS_WIDTH / imageUtils.width;
 		CANVAS_HEIGHT = imageUtils.height * prop;		
 		
 		this.setCanvasZoom(1.0);
+		return this;
 	}
 	public void update() {
 		
@@ -43,7 +54,7 @@ public class ImagePane {
 		
 		WritableImage image = (WritableImage)imageUtils.getImage();
 		gc.drawImage( image, 0.0, 0.0, canvas.getWidth(), h );
-		
+				
 		if(updateStack) {
 			stack.setNew( new WritableImage( image.getPixelReader(), 
 					(int)image.getWidth(), (int)image.getHeight() ) );
@@ -66,6 +77,10 @@ public class ImagePane {
 		return this;
 	}
 
+	public boolean hasImage() {
+		return this.imageUtils != null && imageUtils.getImage() != null;
+	}
+	
 	public void setCanvas(Canvas canvas) {
 		this.canvas = canvas;
 	}

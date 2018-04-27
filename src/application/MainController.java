@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.event.ChangeEvent;
 
+import application.explorer.FileUtils;
 import application.filters.RGBFilter;
 import application.filters.YIQFilter;
 import javafx.beans.value.ChangeListener;
@@ -14,8 +15,10 @@ import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
@@ -23,7 +26,10 @@ import javafx.scene.layout.VBox;
 
 public class MainController {
 	
+	private MainModel main;
 	private SGUtils utils;
+	
+	
     @FXML
     private ResourceBundle resources;
 
@@ -61,6 +67,10 @@ public class MainController {
     void initialize() {
     	utils = SGUtils.getInstance();
         utils.setImagePane( new ImagePane( canvas ) );
+        main = new MainModel();
+        utils.setMainModel(main);
+        setComponentToModel();
+        
         
         rightPane.widthProperty()
         .addListener( (obs, oldValue, newValue ) -> {
@@ -73,6 +83,17 @@ public class MainController {
         		(obs, oldValue, newValue) -> this.onChange((double)newValue) );
         
         zoomSlider.valueProperty().addListener((obs, oldValue, newValue) -> this.zoomChange((double)newValue ) );
+        
+        /* Images Pane settings */
+//        buttonAddImageLabel.prefWidthProperty()
+//			.bind( imagesBox.widthProperty().subtract(5) );
+//        imagesBox.prefWidthProperty().bind( leftScrollPane.widthProperty().subtract(5) );
+//        imagesBox.prefHeightProperty().bind( leftScrollPane.heightProperty().subtract(50) );
+    }
+    
+    private void setComponentToModel() {
+    	main.setSavedLabel(savedLabel);
+    	main.setImagesBox( imagesBox );
     }
     
     
@@ -145,6 +166,9 @@ public class MainController {
     	utils.setLuminosite( YIQFilter.ADD, value );
     }
     
+    /* ***  Filters  *** */
+
+    
     /* Negative */
     
     @FXML
@@ -181,6 +205,15 @@ public class MainController {
     	utils.applyNorm(false);
     }
     
+    
+    @FXML
+    void binarize () {
+    	this.utils.binarize( 200 );
+    }
+    
+    
+    /* ***  END Filters  *** */
+    
     /* --- File MENU --- */
     
     @FXML
@@ -198,9 +231,55 @@ public class MainController {
 
     @FXML
     void saveAs() {
-    	System.out.println("Save As");
+    	this.utils.saveAsImage();
     }
+    /* --- END File MENU --- */
+    
+    
+    /* --- Image MENU --- */
+    
+    @FXML 
+    void combineImagesMenuItemOnAction() {
+    	utils.combineImages();
+    }
+    
+    /* --- END Image MENU --- */
+    
+    
+    /* *** Containers *** */
+    @FXML
+    private VBox imagesBox; 
+    
+    @FXML
+    private ScrollPane leftScrollPane;
+    
+    @FXML
+    private ScrollPane rightScrollPane;
+    
+    
+    /* *** Buttons *** */
+    
+    @FXML private Button addImageBtn;
+    @FXML void addImageBtnAction() {
+    	utils.addImageToCombine();
+    }
+    
+    /* *** END Buttons *** */
 
+    
+    /* *** Labels *** */
+    @FXML
+    private Label buttonAddImageLabel;
+    
+    @FXML 
+    private Label savedLabel;
+    
+    public void updateSavedLabel( String message ) {
+    	this.savedLabel.setText( message != null ? message : "Saved" );
+    }
+    
+    /* *** END Labels *** */
+    
     
     
     

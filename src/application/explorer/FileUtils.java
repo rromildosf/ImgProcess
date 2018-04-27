@@ -47,11 +47,12 @@ public class FileUtils {
 	}
 	
 	
-	public static void saveImage( BufferedImage image ) throws IOException {
+	public static File saveImage( BufferedImage image ) throws IOException {
 		File f = FileUtils.showSaveDialog(null);
 		if( f  != null ) {
 			FileUtils.saveImage( image, f );
 		}
+		return f;
 	}
 	
 	public static void saveImage( BufferedImage image, File path ) throws IOException {
@@ -64,7 +65,7 @@ public class FileUtils {
 		catch ( IOException e ) {
 			e.printStackTrace();
 			throw e;
-		} 
+		}
 	}
 	
 	public static File showSaveDialog( Stage stage ) {

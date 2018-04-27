@@ -9,26 +9,29 @@ import javafx.scene.image.WritableImage;
 
 
 public class ImageUtils {
-	private WritableImage originalImage;
+//	private WritableImage originalImage;
 	private WritableImage image;
 	private int [][][] editImage;
 	public int height;
 	public int width;
 	
 	public ImageUtils( BufferedImage img ) {
-		this.originalImage = SwingFXUtils.toFXImage( img, this.originalImage );
-		this.height = img.getHeight();
-		this.width = img.getWidth();
-		this.image = SwingFXUtils.toFXImage( img, this.originalImage );
-		this.loadPixels();
+		this( SwingFXUtils.toFXImage( img, null ) );
+		
 	}
-	protected void loadPixels() {
-		this.editImage = new int[width][height][3];
+	public ImageUtils( WritableImage img ) {
+		this.height = (int)img.getHeight();
+		this.width = (int)img.getWidth();
+		this.image = new WritableImage( img.getPixelReader(), width, height );
+		
+//		this.loadPixels( img );
+	}
+	protected void loadPixels( ) {
 		Color c = null;
 		
 		for( int i = 0; i < width; i++ ) {
 			for( int j = 0; j < height; j++ ) {
-				c = new Color( originalImage.getPixelReader().getArgb(i, j) );
+				c = new Color( image.getPixelReader().getArgb(i, j) );
 				this.editImage[i][j] = new int[] {c.getRed(),c.getRed(), c.getBlue()};				
 			}
 		}
