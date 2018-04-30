@@ -7,35 +7,35 @@ import javafx.scene.image.Image;
 
 public class StackRedoUndo {
 	private List<Image> images;
-	private int currentIndex = -1;
+	private int pointer = -1;
 	
 	public StackRedoUndo() {
 		this.images = new ArrayList<>();
 	}
 	
 	public void setNew( Image image ) {
-		this.images.add(image);
-//		System.out.println("setting new");
+		
+		if( pointer < images.size()-1 ) {
+			for( int i = pointer+1; i < images.size(); i++ ) {
+				images.remove(i);
+			}
+		}
+		
+		this.images.add(++pointer, image);
 		
 		if( this.images.size() > 30 ) {
 			this.images.remove(0);
 		}
-		this.currentIndex = this.images.size()-1;
 	}
 	
 	public Image redo() {
-		if( currentIndex == this.images.size() - 1 ) {
-			return this.images.get( currentIndex );
+		if( pointer != -1 ) {
+			return images.get( pointer < images.size()-1 ? ++pointer : pointer );
 		}
-		return images.get( ++currentIndex );
+		return null;
 	}
 	
 	public Image undo() {		
-		if( currentIndex == 0 ){
-//			System.out.println("Index "+ currentIndex + " size: "+ images.get(0) );
-			return this.images.get(0);
-		}
-//		System.out.println("Index "+ currentIndex + " size: "+ images.get(currentIndex-1) );
-		return this.images.get(--currentIndex);
+		return this.images.get( pointer == 0 ? 0 : --pointer );
 	}	
 }

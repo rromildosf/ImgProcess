@@ -9,13 +9,14 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="486.0" prefWidth="770.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
+<VBox fx:id="rootBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="486.0" prefWidth="770.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
    <children>
       <MenuBar fx:id="mainWindow">
         <menus>
@@ -81,7 +82,7 @@
         <items>
             <VBox prefHeight="200.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
                <children>
-                  <Button fx:id="normBtn" mnemonicParsing="false" onAction="#applyNorm" prefHeight="25.0" prefWidth="100.0" text="Apply Norm" />
+                  <Button fx:id="normBtn" onAction="#applyNorm" prefHeight="25.0" prefWidth="100.0" text="Apply Norm" />
                   <Button fx:id="notNormBtn" mnemonicParsing="false" onAction="#notNorm" text="Apply -Norm" />
                   <CheckBox fx:id="_red" mnemonicParsing="false" onAction="#onRGBItemAction" text="Red" />
                   <CheckBox fx:id="_green" mnemonicParsing="false" onAction="#onRGBItemAction" text="Green" />
@@ -95,38 +96,47 @@
                     <items>
                         <ScrollPane fx:id="leftScrollPane" centerShape="false" fitToHeight="true" fitToWidth="true" pannable="true" style="-fx-background-color: #711111;">
                            <content>
-                              <VBox fx:id="imagesBox" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: #f5f5f5;">
+                              <VBox fx:id="vboxImagesContainer">
                                  <children>
                                     <Label fx:id="buttonAddImageLabel" contentDisplay="RIGHT" minWidth="-Infinity" text="Images to combine">
                                        <graphic>
-                                          <Button fx:id="addImageBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#addImageBtnAction" text="+" />
+                                          <Button fx:id="addImageBtn" alignment="CENTER_RIGHT" cancelButton="true" contentDisplay="RIGHT" onAction="#addImageBtnAction" style="-fx-background-color: transparent;" text="+" />
                                        </graphic>
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" left="16.0" right="5.0" top="5.0" />
+                                       </VBox.margin>
                                     </Label>
+                                    <Separator prefWidth="200.0" />
+                                    <VBox fx:id="imagesBox" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: #f5f5f5;">
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <padding>
+                                          <Insets left="16.0" />
+                                       </padding>
+                                       <VBox.margin>
+                                          <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                                       </VBox.margin>
+                                    </VBox>
                                  </children>
-                                 <opaqueInsets>
-                                    <Insets />
-                                 </opaqueInsets>
-                                 <padding>
-                                    <Insets left="16.0" />
-                                 </padding>
                               </VBox>
                            </content>
                         </ScrollPane>
                         <ScrollPane fx:id="rightScrollPane" fitToHeight="true" fitToWidth="true">
                           <content>
-                            <AnchorPane fx:id="rightPane">
-                                 <children>
-                                    <Canvas fx:id="canvas" height="387.0" style="-fx-fill: #111111;" width="346.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                 </children>
-                              </AnchorPane>
+                            <AnchorPane fx:id="rightPane" style="-fx-background-color: #881177;" />
                           </content>
+                           <padding>
+                              <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                           </padding>
                         </ScrollPane>
                     </items>
                   </SplitPane>
-                <AnchorPane id="statusPane" fx:id="statusPane" minHeight="0.0" minWidth="0.0" prefHeight="30.0">
+                <AnchorPane id="statusPane" fx:id="statusPane" minHeight="-Infinity" minWidth="0.0" prefHeight="30.0">
                      <children>
                         <Slider fx:id="zoomSlider" blockIncrement="0.1" layoutX="431.0" layoutY="4.0" max="10.0" min="0.05" scaleShape="false" value="1.0" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="4.0" />
                         <Label fx:id="savedLabel" layoutY="3.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="3.0" />
+                        <Canvas fx:id="canvas" height="166.0" style="-fx-fill: #111111;" width="85.0" AnchorPane.bottomAnchor="226.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="210.0" AnchorPane.topAnchor="0.0" />
                      </children></AnchorPane>
                </children>
             </VBox>

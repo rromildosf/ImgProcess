@@ -11,7 +11,7 @@ import javafx.scene.image.WritableImage;
 public class ImageUtils {
 //	private WritableImage originalImage;
 	private WritableImage image;
-	private int [][][] editImage;
+//	private int [][][] editImage;
 	public int height;
 	public int width;
 	
@@ -26,15 +26,19 @@ public class ImageUtils {
 		
 //		this.loadPixels( img );
 	}
-	protected void loadPixels( ) {
-		Color c = null;
-		
-		for( int i = 0; i < width; i++ ) {
-			for( int j = 0; j < height; j++ ) {
-				c = new Color( image.getPixelReader().getArgb(i, j) );
-				this.editImage[i][j] = new int[] {c.getRed(),c.getRed(), c.getBlue()};				
-			}
-		}
+//	protected void loadPixels( ) {
+//		Color c = null;
+//		
+//		for( int i = 0; i < width; i++ ) {
+//			for( int j = 0; j < height; j++ ) {
+//				c = new Color( image.getPixelReader().getArgb(i, j) );
+//				this.editImage[i][j] = new int[] {c.getRed(),c.getRed(), c.getBlue()};				
+//			}
+//		}
+//	}
+	
+	public void removeImage() {
+		this.image = null;
 	}
 	
 	public Image getImage() {

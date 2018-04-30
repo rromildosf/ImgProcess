@@ -2,8 +2,12 @@ package application;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class ImagePane {
@@ -19,9 +23,28 @@ public class ImagePane {
 	
 	public ImagePane( Canvas canvas ) {
 		this.setCanvas(canvas);
-		
 		this.gc = canvas.getGraphicsContext2D();
 		stack = new StackRedoUndo();
+		
+		
+		canvas.addEventHandler( MouseEvent.MOUSE_CLICKED, e -> {
+			if( e.getButton() == MouseButton.SECONDARY ) {
+				MenuItem undo = new MenuItem("Undo");
+				MenuItem redo = new MenuItem("Redo");
+				MenuItem remove = new MenuItem("Remove Image");
+				
+				undo.setOnAction( u -> this.undo() );
+				redo.setOnAction( u -> this.redo() );
+				
+				remove.setOnAction( r -> {
+					r.consume();
+					SGUtils.getInstance().removeImagePane(this);
+				});
+				
+				ContextMenu ctm = new ContextMenu(undo, redo, remove);
+				ctm.show( canvas.getScene().getWindow(), e.getSceneX(), e.getSceneY());
+			}
+		});
 	}
 	
 	public ImagePane( WritableImage image ) {
@@ -43,9 +66,6 @@ public class ImagePane {
 		return this;
 	}
 	public void update() {
-		
-		gc.setFill( Color.BLUE );
-		gc.fillRoundRect(10, 10, canvas.getWidth(), canvas.getHeight(), 0, 0);
 		
 		if( imageUtils == null || imageUtils.width == 0 ) return;
 		

@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.TransferHandler;
@@ -57,8 +58,13 @@ public class SGUtils {
 
 	public void loadImages() {
 		BufferedImage image = FileUtils.openImage( null, null );
-		if( image != null ) {			
-			this.editImagePane.setImageUtils( new ImageUtils( image ) );
+		if( image != null ) {
+			if( this.editImagePane != null )
+				this.editImagePane.setImageUtils( new ImageUtils( image ) );
+			else {
+				this.editImagePane = new ImagePane( SwingFXUtils.toFXImage(image, null) );
+				main.getMainImagePane().getChildren().add( editImagePane.getCanvas() );
+			}
 		}
 	}
 	
@@ -79,30 +85,52 @@ public class SGUtils {
 	}
 	
 	/* **** Image  **** */
-	public void combineImages() {
-		CombineFilter cf = new CombineFilter();
+	public void combineImages( boolean maintainAspectRatio ) {
+		if( imagesToCombine == null || imagesToCombine.size() == 0 ) return;
 		
+		CombineFilter cf = new CombineFilter();
 		WritableImage combineImage = null;
 		int index = 0; // index to FOR, important in case of image == null and images to combine > 1
-		if( editImagePane.hasImage() ) {
+		
+		if( editImagePane != null ) {
 			combineImage = (WritableImage)editImagePane.getImageUtils().getImage();
-		}
-		else if( imagesToCombine.size() > 0 ) {
-			combineImage = (WritableImage)imagesToCombine.get(0).getImageUtils().getImage();
-			index++;
+		} else {
+			combineImage = (WritableImage)imagesToCombine.get( index++ ).getImageUtils().getImage();
 		}
 		
 		for( ; index < imagesToCombine.size(); index++ ) {
-			System.out.println(imagesToCombine.get(index).getImageUtils().getImage());
-			cf.combine( (WritableImage)imagesToCombine.get(index).getImageUtils().getImage(), combineImage );
+			cf.combine( (WritableImage)imagesToCombine.get(index).getImageUtils().getImage(),
+					combineImage, maintainAspectRatio );
 		}
 		
-		if( !editImagePane.hasImage() ) {
-			editImagePane.setImageUtils( new ImageUtils(combineImage) );
+		if( editImagePane == null ) {
+			this.editImagePane = new ImagePane( combineImage );
+			main.getMainImagePane().getChildren().add( editImagePane.getCanvas() );
 		}
-		this.editImagePane.update();
-		this.setHasUnsavedChanges(true);
-
+		else {
+			this.editImagePane.update();
+			this.setHasUnsavedChanges(true);	
+		}
+		
+	}
+	
+	public void removeImagePane( ImagePane pane ) {
+		
+		
+		if( pane == editImagePane ) {
+			this.editImagePane = null;
+			main.getMainImagePane().getChildren().remove(0);
+			return;
+		}
+		if( imagesToCombine == null ) return; //only for safe
+		
+		for( int i = 0; i < imagesToCombine.size(); i++ ) {
+			if( pane == imagesToCombine.get(i) ) {
+				main.getImagesBox().getChildren().remove(i);
+				imagesToCombine.remove(i);
+				break;
+			}	
+		}
 	}
 	
 	
@@ -172,15 +200,17 @@ public class SGUtils {
 	/* **** Filters  **** */
 	
 	public void undo() {
-		this.editImagePane.undo();
-		
-		this.setHasUnsavedChanges(true);
+		if( editImagePane != null ) {
+			this.editImagePane.undo();
+			this.setHasUnsavedChanges(true);
+		}
 	}
 	
 	public void redo() {
-		this.editImagePane.redo();
-		
-		this.setHasUnsavedChanges(true);
+		if( editImagePane != null ) {
+			this.editImagePane.redo();
+			this.setHasUnsavedChanges(true);
+		}
 	}
 	
 	
