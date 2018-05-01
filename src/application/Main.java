@@ -1,6 +1,5 @@
 package application;
 	
-import application.dialogs.CombineDialogController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -16,6 +15,7 @@ public class Main extends Application {
 			FXMLLoader loader = new FXMLLoader( MainController.class.getResource("MainApp.fxml"));
 	        Parent root = loader.load();	        
 	        Scene scene = new Scene(root);
+	        primaryStage.setTitle("IMP");
 	        primaryStage.setScene(scene);
 	        primaryStage.show();
 	        

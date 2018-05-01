@@ -35,7 +35,9 @@ public class SGUtils {
 	 * Image name to use in saves */
 	private String imageName;	
 	
-	private SGUtils() {}
+	private SGUtils() {
+		imagesToCombine = new ArrayList<>();
+	}
 	
 	public void setMainModel( MainModel model ) {
 		this.main = model;
@@ -56,32 +58,73 @@ public class SGUtils {
 		this.editImagePane = imagePane;
 	}
 
-	public void loadImages() {
-		BufferedImage image = FileUtils.openImage( null, null );
-		if( image != null ) {
-			if( this.editImagePane != null )
-				this.editImagePane.setImageUtils( new ImageUtils( image ) );
-			else {
-				this.editImagePane = new ImagePane( SwingFXUtils.toFXImage(image, null) );
-				main.getMainImagePane().getChildren().add( editImagePane.getCanvas() );
+	/**
+	 * Open images to combine with the main image, and replace existing opened images */
+	public void loadImagesToCombine( boolean replace ) { 
+		List<BufferedImage> images = FileUtils.openImages( null );
+		if( replace ) { // fist remove all images, except main image
+			for( int i =  1; i < imagesToCombine.size(); i++ ) {
+				imagesToCombine.remove(i);
 			}
+		}
+		if( images != null && images.size() > 0 ) {	
+			images.forEach( image -> {
+				addImagePane( image );
+			});	
 		}
 	}
 	
-	public void addImageToCombine() {
-		BufferedImage image = FileUtils.openImage(null, null);
-		if( image == null ) return;
-		ImagePane pane = new ImagePane( SwingFXUtils.toFXImage( image, null) );
-		addImagePane( pane );
-		
-		main.getImagesBox().getChildren()
-			.add( pane.getCanvas() );
+	/**
+	 * Open main image, replacing existing main image */
+	public void loadMainImage() {
+		BufferedImage image = FileUtils.openImage( null, null );
+		if( image != null ) {
+			setMainImage(  SwingFXUtils.toFXImage(image, null)  );
+		}
 	}
-	public void addImagePane( ImagePane pane ) {
+	
+	/**
+	 * Set main image
+	 */
+	private void setMainImage( WritableImage image ) {
+		if( this.editImagePane != null ) {
+			this.editImagePane.setImageUtils( new ImageUtils( image ) );
+			this.imagesToCombine.get(0).setImageUtils( new ImageUtils(image) );
+		}
+		else {
+			this.editImagePane = new ImagePane( image );
+			main.getMainImagePane().getChildren().add( editImagePane.getCanvas() );
+			addImagePane( image, 0);
+		}
+	}
+	
+	
+	
+	/** 
+	 * Add images to combine, without replacing opened images */
+	public void addImagesToCombine() {
+		this.loadImagesToCombine(false);
+	}
+	
+	/**
+	 * Add @param image to left pane and images to combine
+	 * @param image
+	 * @param index
+	 */
+	public void addImagePane( WritableImage image, int index ) {
 		if( imagesToCombine == null ) {
 			this.imagesToCombine = new ArrayList<>();
 		}
-		imagesToCombine.add( pane );
+		ImagePane pane = new ImagePane( image );
+		imagesToCombine.add( index, pane );
+		
+		// add image to left pane
+		main.getImagesBox()
+			.getChildren()
+			.add( index, pane.getCanvas() );
+	}
+	public void addImagePane( BufferedImage image ) {
+		this.addImagePane(  SwingFXUtils.toFXImage(image, null), imagesToCombine.size() );
 	}
 	
 	/* **** Image  **** */
@@ -89,29 +132,26 @@ public class SGUtils {
 		if( imagesToCombine == null || imagesToCombine.size() == 0 ) return;
 		
 		CombineFilter cf = new CombineFilter();
-		WritableImage combineImage = null;
-		int index = 0; // index to FOR, important in case of image == null and images to combine > 1
+		WritableImage combineImage = (WritableImage)imagesToCombine.get(0).getImageUtils().getImage();
 		
+		int i = 0;
 		if( editImagePane != null ) {
 			combineImage = (WritableImage)editImagePane.getImageUtils().getImage();
-		} else {
-			combineImage = (WritableImage)imagesToCombine.get( index++ ).getImageUtils().getImage();
+			i= 1;
 		}
 		
-		for( ; index < imagesToCombine.size(); index++ ) {
-			cf.combine( (WritableImage)imagesToCombine.get(index).getImageUtils().getImage(),
+		for( ; i < imagesToCombine.size(); i++ ) {
+			cf.combine( (WritableImage)imagesToCombine.get(i).getImageUtils().getImage(),
 					combineImage, maintainAspectRatio );
 		}
-		
+
 		if( editImagePane == null ) {
-			this.editImagePane = new ImagePane( combineImage );
+			editImagePane = new ImagePane( combineImage );
 			main.getMainImagePane().getChildren().add( editImagePane.getCanvas() );
 		}
-		else {
+		else
 			this.editImagePane.update();
-			this.setHasUnsavedChanges(true);	
-		}
-		
+		this.setHasUnsavedChanges(true);		
 	}
 	
 	public void removeImagePane( ImagePane pane ) {
@@ -120,14 +160,23 @@ public class SGUtils {
 		if( pane == editImagePane ) {
 			this.editImagePane = null;
 			main.getMainImagePane().getChildren().remove(0);
+			main.getImagesBox().getChildren().remove(0);
+			imagesToCombine.remove(0);
 			return;
 		}
-		if( imagesToCombine == null ) return; //only for safe
+		//if( imagesToCombine == null ) return; //only for safe
 		
 		for( int i = 0; i < imagesToCombine.size(); i++ ) {
 			if( pane == imagesToCombine.get(i) ) {
+				
+				if( i == 0 ) { // removing original editing image
+					this.editImagePane = null;
+					main.getMainImagePane().getChildren().remove(0);
+				}
+				
 				main.getImagesBox().getChildren().remove(i);
 				imagesToCombine.remove(i);
+				
 				break;
 			}	
 		}
@@ -145,6 +194,7 @@ public class SGUtils {
 	}
 	
 	public void setChannels( int type ) {
+		if( editImagePane == null ) return;
 		new RGBFilter()
 			.setOptions( type )
 			.apply( (WritableImage)editImagePane.getImageUtils().getImage() );
@@ -153,7 +203,8 @@ public class SGUtils {
 		this.setHasUnsavedChanges(true);
 	}
 	
-	public void setLuminosite( int type, double value ) {
+	public void setLightness( int type, double value ) {
+		if( editImagePane == null ) return;
 		new YIQFilter()
 			.setOptions( type )
 			.setValue( value )
@@ -180,8 +231,9 @@ public class SGUtils {
 	/* Norm */
 	public void applyNorm( boolean type ) {
 		
-		new Norm().apply( (WritableImage)editImagePane.getImageUtils().getImage(), type );	
-		this.editImagePane.update();
+		WritableImage img  = new Norm().transform( (WritableImage)editImagePane.getImageUtils().getImage() );
+		
+		this.editImagePane.setImageUtils( new ImageUtils( img ) );
 		
 		this.setHasUnsavedChanges(true);
 	}
@@ -212,9 +264,7 @@ public class SGUtils {
 			this.setHasUnsavedChanges(true);
 		}
 	}
-	
-	
-	
+		
 	/* Zoom */
 	public void zoomChange( double zoom ) {
 		this.editImagePane.setCanvasZoom(zoom);

@@ -1,41 +1,44 @@
 package application;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Stack;
 
-import javafx.scene.image.Image;
-
-public class StackRedoUndo {
-	private List<Image> images;
-	private int pointer = -1;
+public class StackRedoUndo<T> {
+	private Stack<T> redoStack;
+	private Stack<T> undoStack;
 	
 	public StackRedoUndo() {
-		this.images = new ArrayList<>();
+		redoStack = new Stack<>();
+		undoStack = new Stack<>();
+	}
+
+	public void setNew( T item ) {
+		undoStack.push(item);
+		redoStack.clear();
 	}
 	
-	public void setNew( Image image ) {
-		
-		if( pointer < images.size()-1 ) {
-			for( int i = pointer+1; i < images.size(); i++ ) {
-				images.remove(i);
-			}
-		}
-		
-		this.images.add(++pointer, image);
-		
-		if( this.images.size() > 30 ) {
-			this.images.remove(0);
-		}
+	public boolean canUndo() {
+		System.out.println(undoStack.size());
+		return !undoStack.empty();
+	}
+
+	public boolean canRedo() {
+		System.out.println(redoStack.size());
+		return !redoStack.empty();
 	}
 	
-	public Image redo() {
-		if( pointer != -1 ) {
-			return images.get( pointer < images.size()-1 ? ++pointer : pointer );
-		}
-		return null;
+	public void clear() {
+		this.redoStack.clear();
+		this.undoStack.clear();
 	}
 	
-	public Image undo() {		
-		return this.images.get( pointer == 0 ? 0 : --pointer );
-	}	
+	public T redo() {
+		if( redoStack.isEmpty() ) return null;
+		return undoStack.push( redoStack.pop() );
+	}
+	
+	public T undo() {		
+		if( undoStack.isEmpty() ) return null;
+		return redoStack.push( undoStack.pop() );
+	}
+		
 }

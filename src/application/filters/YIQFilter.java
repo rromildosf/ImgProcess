@@ -6,29 +6,32 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 public class YIQFilter {
-	public static int MULT = 1; 
-	public static int ADD = 2; 
+	public static final int MULT = 1; 
+	public static final int ADD = 2; 
 	
 	private double value;
 	private int type;
 	
 	public YIQFilter apply( WritableImage image ) {
+		if( image == null ) return this;
 		PixelWriter pw = image.getPixelWriter();
 		PixelReader pr = image.getPixelReader();
 		
 		int r, g, b;
 		Color c;
+		
+		System.out.println("Type "+ type );
+		System.out.println("Value "+ value );
+		
+		
 		for( int n = 0; n < image.getWidth(); n++ ) {
-//			System.out.println();
+
 			for( int j = 0; j < image.getHeight(); j++ ) {
 				c = pr.getColor(n, j);
 				r = (int)(c.getRed() * 255);
 				g = (int)(c.getGreen() * 255);
 				b = (int)(c.getBlue() * 255);
-				
-//				System.out.print("[R,G,B] = ["+ r + ", "+ g + ", "+b +"]  \n");
-
-				
+								
 				double 	y = this.getY(r, g, b),
 						i = this.getI(r, g, b),
 						q = this.getQ(r, g, b);
@@ -38,16 +41,14 @@ public class YIQFilter {
 				}
 				else y *= value;
 				
-				r = ((int)this.getR(y, i, q));
-				g = ((int)this.getG(y, i, q));
-				b = ((int)this.getB(y, i, q));
+				r = Math.abs((int)this.getR(y, i, q));
+				g = Math.abs((int)this.getG(y, i, q));
+				b = Math.abs((int)this.getB(y, i, q));
 				
-				r = r > 255 ? 255 : r;
+				r = r > 255 ? 255 : r; // correct 255 instead of [r,g,b]%255
 				g = g > 255 ? 255 : g;
 				b = b > 255 ? 255 : b;
-				
-//				System.out.println("[R,G,B] = ["+ r + ", "+ g + ", "+b +"]  \n");
-				
+								
 				pw.setColor( n, j, Color.rgb( r, g, b ) );
 			}
 		}
@@ -61,6 +62,7 @@ public class YIQFilter {
 	
 	public YIQFilter setValue( double value ) {
 		this.value = value;
+		System.out.println("new value " + value );
 		return this;
 	}
    

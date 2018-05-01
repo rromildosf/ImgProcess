@@ -3,7 +3,9 @@ package application.explorer;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.EventListener;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -46,6 +48,43 @@ public class FileUtils {
 		} 
 	}
 	
+	private static List<BufferedImage> openImages( List<File> files ) {
+		List<BufferedImage> images = new ArrayList<>(files.size());
+		
+		files.forEach( file -> {
+			try {
+				images.add( ImageIO.read( file ) );
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} );
+		
+		return images; 
+	}
+	
+	public static List<BufferedImage> openImages( Stage stage ){
+		final FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Choose a picture");
+		fileChooser.setInitialDirectory( new File( System.getProperty("user.home") ) );
+		fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.png"),
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png")
+            );
+		
+		try {
+			fileChooser.setTitle("Open an image");
+			List<File> files = fileChooser.showOpenMultipleDialog(stage);
+	        if ( files != null && files.size() > 0 ) {
+				return FileUtils.openImages( files );
+	        }
+	        return null;
+		} catch ( Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	public static File saveImage( BufferedImage image ) throws IOException {
 		File f = FileUtils.showSaveDialog(null);

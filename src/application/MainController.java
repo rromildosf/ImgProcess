@@ -1,25 +1,15 @@
 package application;
 
+import static java.lang.System.out;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import javax.swing.event.ChangeEvent;
-
-import application.dialogs.CombineDialogController;
-import application.dialogs.CombineDialogM;
-import application.explorer.FileUtils;
-import application.filters.RGBFilter;
-import application.filters.YIQFilter;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import application.dialogs.MDialog;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -31,9 +21,6 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 public class MainController {
 	
@@ -60,7 +47,7 @@ public class MainController {
     private AnchorPane leftPane;
 
     @FXML
-    private AnchorPane rightPane;
+    private VBox rightPane;
 
     @FXML
     private AnchorPane statusPane;
@@ -80,28 +67,12 @@ public class MainController {
     @FXML
     void initialize() {
     	utils = SGUtils.getInstance();
-//        utils.setImagePane( new ImagePane( canvas ) );
         main = new MainModel();
         utils.setMainModel(main);
         setComponentToModel();
-        
-        
-        rightPane.widthProperty()
-        .addListener( (obs, oldValue, newValue ) -> {
-        	this.setAnchor();
-        });
-        rightPane.heightProperty().addListener( e -> {
-        	System.out.println(rightPane.getWidth() + ", " + rightPane.getHeight() );
-        	this.setAnchor();
-        });
-        
-        
-        _slider.valueProperty().addListener( 
-        		(obs, oldValue, newValue) -> this.onChange((double)newValue) );
-        
+
         zoomSlider.valueProperty().addListener((obs, oldValue, newValue) -> {
-        	this.zoomChange((double)newValue );
-        	
+        	this.zoomChange((double)newValue );        	
         });
         
         buttonAddImageLabel.prefWidthProperty().bind( vboxImagesContainer.widthProperty().subtract(32) );
@@ -110,71 +81,52 @@ public class MainController {
         	if( newScene != null ) {
         		newScene.getAccelerators().put(
         			new KeyCodeCombination( KeyCode.A, KeyCombination.CONTROL_DOWN ), 
-    					new Runnable() { 
-        					@Override public void run() {
-        					addImageBtn.fire();
-        				}
+					new Runnable() { 
+    					@Override public void run() {
+    						addImageBtn.fire();
+    					}
+        			}
+    			);
+        		
+        		newScene.getAccelerators().put(
+            		new KeyCodeCombination( KeyCode.N, KeyCombination.CONTROL_DOWN ), 
+					new Runnable() { 
+    					@Override public void run() {
+    						SGUtils.getInstance().applyNorm(true);
+    					}
         			}
     			);
         	}
         });
-//		  
-        
-        /* Images Pane settings */
-//        buttonAddImageLabel.prefWidthProperty()
-//			.bind( imagesBox.widthProperty().subtract(5) );
-//        imagesBox.prefWidthProperty().bind( leftScrollPane.widthProperty().subtract(5) );
-//        imagesBox.prefHeightProperty().bind( leftScrollPane.heightProperty().subtract(50) );
     }
     
     private void setComponentToModel() {
     	main.setSavedLabel(savedLabel);
     	main.setImagesBox( imagesBox );
-    	main.setMainImagePane( rightPane );
+    	main.setMainImagePane( rightPane );		
     }
     
     
     private void zoomChange( double zoom ) {
-    	System.out.println(zoom * 100);
     	this.utils.zoomChange(zoom);
-    	this.setAnchor();
-    	
-    }
-    private void setAnchor() {
-    	ImagePane pane = utils.getImagePane();
-    	if( pane == null  ) return;
-    	
-    	
-    	double rl = (rightPane.getWidth() - pane.getCanvas().getWidth())/2;
-    	double tb = (rightPane.getHeight() - pane.getCanvas().getHeight() )/2;
-    	
-    	System.out.println(rl + ", " + tb );
-    	AnchorPane.setLeftAnchor( pane.getCanvas(), rl > 0 ? rl : 0 );
-    	AnchorPane.setTopAnchor( pane.getCanvas(), tb > 0 ? tb : 0 );
     }
     
     @FXML
     void openImageAction() {
-    	utils.loadImages();	
-		this.setAnchor();
+    	utils.loadMainImage();	
+//		this.setAnchor();
     }
     
     @FXML
     void convertToMono() {
-    	System.out.println("called");
-    	this.utils.convertToMono(4);
+    	new MDialog( imageBox.getScene().getWindow(), "MonoDialog.fxml" ).show();
     }
     
     @FXML CheckBox _red, _green, _blue;
     
     @FXML
     void onRGBItemAction() {
-    	System.out.println("called RGB channels");
-    	utils.setChannels( 
-        		(_red.isSelected() ? RGBFilter.R : 0 ) +
-        		(_green.isSelected() ? RGBFilter.G : 0 ) +
-        		(_blue.isSelected() ? RGBFilter.B : 0 )
-    	);    	
+    	new MDialog( imageBox.getScene().getWindow(), "RGBDialog.fxml" ).show();    	
     }
     
     @FXML
@@ -205,9 +157,8 @@ public class MainController {
     private Slider _slider;
     
     @FXML
-    void onChange( double value ) {
-    	System.out.println(value);
-    	utils.setLuminosite( YIQFilter.ADD, value );
+    void onLightnessAction() {
+    	new MDialog( imageBox.getScene().getWindow(), "LightnessDialog.fxml" ).show();	
     }
     
     /* ***  Filters  *** */
@@ -284,7 +235,7 @@ public class MainController {
     
     @FXML 
     void combineImagesMenuItemOnAction() {
-    	new CombineDialogM( imageBox.getScene().getWindow() ).show();
+    	new MDialog( imageBox.getScene().getWindow(), "CombineDialog.fxml" ).show();
     }
     
     /* --- END Image MENU --- */
@@ -309,7 +260,7 @@ public class MainController {
     @FXML private Button addImageBtn;
     
     @FXML void addImageBtnAction() {
-    	utils.addImageToCombine();
+    	utils.addImagesToCombine();
     }
     
     /* *** END Buttons *** */

@@ -1,11 +1,77 @@
 package application.filters;
 
+import application.ImageUtils;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 public class Norm {
+	
+	public WritableImage transform ( WritableImage img ) {
+		System.out.println("transforming");
+		WritableImage image = ImageUtils.getScaledImage(img, null, img.getWidth()*5, img.getHeight()*5, true, 0, 0);
+		PixelWriter pw = image.getPixelWriter();
+		PixelReader pr = image.getPixelReader();
+		
+		int r, g, b, m;
+		Color c;
+		int t = 22;
+		
+		int ar = 0, ag = 0 , ab = 0;
+		int count = 0;
+		for( int n = 0; n < image.getWidth(); n++ ) {
+
+			for( int j = 0; j < image.getHeight(); j++ ) {
+				
+				c = pr.getColor(n, j);
+				
+				r = (int)( c.getRed() * 255 );
+				g = (int)( c.getGreen() * 255 );
+				b = (int)( c.getBlue() * 255 );
+				
+				Color a = null;
+				int q = 0, w = 0, e = 0;
+				if( n > 0 ) {
+					a = pr.getColor( n - 1, j );
+					
+					q = (int)(a.getRed()*255);
+					w = (int)(a.getRed()*255);
+					e = (int)(a.getRed()*255);
+				}
+				
+				if(  ar + t >= r && ar - t < r ) {
+					if( a != null ) {
+						if(  ar + t >= r && ar - t < r && q + t >= r && q - t < r  ) {
+							r = (q+ar)/2;
+						}
+						else ar = r;
+					}
+				
+				}
+				if(  ar + t >= r && ar - t < r ) {
+					if( a != null  ) {
+						if(  ag + t >= g && ag - t < g && w + t >= g && w - t < g  ) {
+							g = (w+ag)/2;
+						} else ag = g;
+					}
+					
+				}
+				if(  ar + t >= r && ar - t < r ) {
+					if( a != null ) {
+						if(  ab + t >= b && ab - t < b && e + t >= b && e - t < b  ) { 
+							b = (e+ab)/2;
+						} else ab = b;
+					}
+					
+				}
+				
+				pw.setColor(n, j, Color.rgb(r, g, b));
+			
+			}
+		}		
+		return image;
+	}
 	
 	public Norm apply( WritableImage image ) {
 		PixelWriter pw = image.getPixelWriter();

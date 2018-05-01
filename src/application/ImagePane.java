@@ -8,13 +8,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 
 public class ImagePane {
 	private Canvas canvas;
 	private GraphicsContext gc;
 	private ImageUtils imageUtils;
-	private StackRedoUndo stack;
+	private StackRedoUndo<Image> stack;
 	private boolean updateStack = true;
 	
 	/* Fixed value don't use to get canvas width or height */
@@ -24,7 +23,7 @@ public class ImagePane {
 	public ImagePane( Canvas canvas ) {
 		this.setCanvas(canvas);
 		this.gc = canvas.getGraphicsContext2D();
-		stack = new StackRedoUndo();
+		stack = new StackRedoUndo<>();
 		
 		
 		canvas.addEventHandler( MouseEvent.MOUSE_CLICKED, e -> {
@@ -58,10 +57,12 @@ public class ImagePane {
 	
 	public ImagePane setImageUtils( ImageUtils utils ) {
 		this.imageUtils = utils;
+		this.stack.clear();
 		
 		double prop = CANVAS_WIDTH / imageUtils.width;
 		CANVAS_HEIGHT = imageUtils.height * prop;		
 		
+		this.addImageOnStack( this.imageUtils.getImage() );
 		this.setCanvasZoom(1.0);
 		return this;
 	}
@@ -75,11 +76,16 @@ public class ImagePane {
 		WritableImage image = (WritableImage)imageUtils.getImage();
 		gc.drawImage( image, 0.0, 0.0, canvas.getWidth(), h );
 				
-		if(updateStack) {
+		addImageOnStack(image);
+		updateStack = true;
+	}
+	
+	private void addImageOnStack( Image image ) {
+		System.out.println(image);
+		if( updateStack && image != null ) {
 			stack.setNew( new WritableImage( image.getPixelReader(), 
 					(int)image.getWidth(), (int)image.getHeight() ) );
 		}
-		updateStack = true;
 	}
 	public ImagePane setImage( Image image ) {
 		gc.drawImage(image, 0.0, 0.0);
@@ -93,6 +99,7 @@ public class ImagePane {
 	public ImagePane setCanvasZoom( double zoom ) {
 		this.canvas.setWidth( this.CANVAS_WIDTH * zoom );
 		this.canvas.setHeight( this.CANVAS_HEIGHT * zoom );
+		this.updateStack = false;
 		this.update();
 		return this;
 	}
@@ -106,14 +113,18 @@ public class ImagePane {
 	}
 	
 	public void undo() {
-		this.imageUtils.setImage( this.stack.undo() );
-		updateStack = false;
-		this.update();
+		if( stack.canUndo()  ) {
+			this.imageUtils.setImage( this.stack.undo() );
+			updateStack = false;
+			this.update();
+		}
 	}
 	public void redo() {
-		this.imageUtils.setImage( this.stack.redo() );
-		updateStack = false;
-		this.update();
+		if( stack.canRedo() ) {
+			this.imageUtils.setImage( this.stack.redo() );
+			updateStack = false;
+			this.update();	
+		}
 	}
 
 

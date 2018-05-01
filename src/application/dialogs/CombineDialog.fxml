@@ -7,7 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<DialogPane fx:id="dialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.dialogs.CombineDialogController">
+<DialogPane fx:id="dialog" headerText="Combine images" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.dialogs.CombineDialogController">
    <header>
       <Label text="Combine Images">
          <padding>
@@ -18,9 +18,9 @@
    <content>
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
          <children>
-            <Button fx:id="applyBtn" layoutX="225.0" layoutY="54.0" mnemonicParsing="false" onAction="#applyBtnAction" text="Apply" />
+            <Button fx:id="applyBtn" defaultButton="true" layoutX="225.0" layoutY="54.0" mnemonicParsing="false" onAction="#applyBtnAction" text="Apply" />
             <CheckBox fx:id="aspectRatioCheck" layoutX="74.0" layoutY="14.0" mnemonicParsing="false" text="Maintain aspect ratio" />
-            <Button fx:id="cancelBtn" layoutX="150.0" layoutY="54.0" mnemonicParsing="false" onAction="#cancelAction" text="Cancel" />
+            <Button fx:id="cancelBtn" cancelButton="true" layoutX="150.0" layoutY="54.0" mnemonicParsing="false" onAction="#cancelAction" text="Cancel" />
          </children>
       </AnchorPane>
    </content>

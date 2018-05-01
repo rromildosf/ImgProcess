@@ -10,13 +10,13 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
-public class CombineDialogM extends Stage {
+public class MDialog extends Stage {
 
-	public CombineDialogM( Window n ) {
+	public MDialog( Window n, String fxml ) {
     	try {
     		initStyle( StageStyle.UTILITY );
     		initModality( Modality.NONE );
-			FXMLLoader loader = new FXMLLoader( CombineDialogController.class.getResource("CombineDialog.fxml"));
+			FXMLLoader loader = new FXMLLoader( getClass().getResource(fxml) );
 	        Parent root = loader.load();
 	       
 	        Scene scene = new Scene(root);
