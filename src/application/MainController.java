@@ -207,6 +207,32 @@ public class MainController {
     }
     
     
+    @FXML
+    private MenuItem meanItem;
+    
+    @FXML
+    void meanAction () {
+    	this.utils.applyMean(4);
+    }
+    
+    @FXML
+    private MenuItem medianItem;
+    
+    @FXML
+    void medianAction () {
+    	this.utils.applyMedian(3);
+    }
+    
+    
+    @FXML
+    private MenuItem modeItem;
+    
+    @FXML
+    void modeAction () {
+    	this.utils.applyMode(3);
+    }
+    
+    
     /* ***  END Filters  *** */
     
     /* --- File MENU --- */

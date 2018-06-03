@@ -1,5 +1,6 @@
 package application;
 
+import java.util.Iterator;
 import java.util.Stack;
 
 public class StackRedoUndo<T> {
@@ -12,6 +13,9 @@ public class StackRedoUndo<T> {
 	}
 
 	public void setNew( T item ) {
+		for( int i = 0; i < redoStack.size(); i++ ) {
+			undoStack.push( redoStack.pop() );
+		}
 		undoStack.push(item);
 		redoStack.clear();
 	}

@@ -12,6 +12,9 @@ import javax.swing.TransferHandler;
 import application.explorer.FileUtils;
 import application.filters.BinaryFilter;
 import application.filters.CombineFilter;
+import application.filters.MeanFilter;
+import application.filters.MedianFilter;
+import application.filters.ModeFilter;
 import application.filters.MonoFilter;
 import application.filters.NegativeFilter;
 import application.filters.Norm;
@@ -246,6 +249,37 @@ public class SGUtils {
 			.apply( (WritableImage)editImagePane.getImageUtils().getImage() );
 		this.editImagePane.update();
 		
+		this.setHasUnsavedChanges(true);
+	}
+	
+	/* Mean Filter */
+	public void applyMean( int windowSize ) {
+		new MeanFilter()
+		.setOptions( windowSize )
+		.apply( (WritableImage)editImagePane.getImageUtils().getImage() );
+		
+		this.editImagePane.update();
+		this.setHasUnsavedChanges(true);
+	}
+	
+	
+	/* Median Filter */
+	public void applyMedian( int windowSize ) {
+		new MedianFilter()
+		.setOptions( windowSize )
+		.apply( (WritableImage)editImagePane.getImageUtils().getImage() );
+		
+		this.editImagePane.update();
+		this.setHasUnsavedChanges(true);
+	}
+	
+	/* Mode Filter */
+	public void applyMode( int windowSize ) {
+		new ModeFilter()
+		.setOptions( windowSize )
+		.apply( (WritableImage)editImagePane.getImageUtils().getImage() );
+		
+		this.editImagePane.update();
 		this.setHasUnsavedChanges(true);
 	}
 	

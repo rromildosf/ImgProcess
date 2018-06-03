@@ -76,6 +76,9 @@
                         <MenuItem fx:id="negativeInY" mnemonicParsing="false" onAction="#onNegativeY" text="Negative in Y" />
                     </items>
                   </Menu>
+                  <MenuItem fx:id="meanItem" mnemonicParsing="false" onAction="#meanAction" text="Mean" />
+                  <MenuItem fx:id="medianItem" mnemonicParsing="false" onAction="#medianAction" text="Median" />
+                  <MenuItem fx:id="modeItem" mnemonicParsing="false" onAction="#modeAction" text="Mode" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">
