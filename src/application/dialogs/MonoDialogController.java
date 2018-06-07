@@ -9,7 +9,7 @@ import javafx.scene.control.ToggleGroup;
 
 public class MonoDialogController {
 
-	 @FXML
+	@FXML
     private RadioButton blueRadio;
 
     @FXML

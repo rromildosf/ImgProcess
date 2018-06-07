@@ -5,6 +5,8 @@ import static java.lang.System.out;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.sun.glass.events.SwipeGesture;
+
 import application.dialogs.MDialog;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -212,7 +214,9 @@ public class MainController {
     
     @FXML
     void meanAction () {
-    	this.utils.applyMean(4);
+//    	this.utils.applyMean(10);
+    	SGUtils.getInstance().filterType = 1;
+    	new MDialog( imageBox.getScene().getWindow(), "OptionValueDialog.fxml" ).show();
     }
     
     @FXML
@@ -220,20 +224,40 @@ public class MainController {
     
     @FXML
     void medianAction () {
-    	this.utils.applyMedian(3);
+//    	this.utils.applyMedian(10);
+    	SGUtils.getInstance().filterType = 2;
+    	new MDialog( imageBox.getScene().getWindow(), "OptionValueDialog.fxml" ).show();
     }
     
-    
-    @FXML
-    private MenuItem modeItem;
     
     @FXML
     void modeAction () {
-    	this.utils.applyMode(3);
+    	SGUtils.getInstance().filterType = 3;
+    	new MDialog( imageBox.getScene().getWindow(), "OptionValueDialog.fxml" ).show();
     }
     
+    @FXML
+    void onGaussian () {
+    	SGUtils.getInstance().applyGaussian();
+    }
     
     /* ***  END Filters  *** */
+    
+    /* *** Edge Filters  *** */
+    @FXML 
+    void onEdge1() {
+    	SGUtils.getInstance().applyEdgeFilter( 1 );
+    }
+    
+    @FXML 
+    void onEdge2() {
+    	SGUtils.getInstance().applyEdgeFilter( 2 );
+    }
+    
+    @FXML 
+    void onEdge3() {
+    	SGUtils.getInstance().applyEdgeFilter( 3 );
+    }
     
     /* --- File MENU --- */
     

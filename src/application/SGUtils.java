@@ -11,7 +11,9 @@ import javax.swing.TransferHandler;
 
 import application.explorer.FileUtils;
 import application.filters.BinaryFilter;
+import application.filters.BorderDetectFilter;
 import application.filters.CombineFilter;
+import application.filters.GaussianFilter;
 import application.filters.MeanFilter;
 import application.filters.MedianFilter;
 import application.filters.ModeFilter;
@@ -27,6 +29,8 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
 
 public class SGUtils {
+	public int filterType = -1; 
+	
 	private List<ImagePane> imagesToCombine;
 	private ImagePane editImagePane;
 	
@@ -282,6 +286,41 @@ public class SGUtils {
 		this.editImagePane.update();
 		this.setHasUnsavedChanges(true);
 	}
+	
+	public void applyGaussian() {
+		new GaussianFilter()
+		.apply( (WritableImage)editImagePane.getImageUtils().getImage() );
+		
+		this.editImagePane.update();
+		this.setHasUnsavedChanges(true);
+	}
+	
+	
+	public void applyEdgeFilter( int type ) {
+		new BorderDetectFilter()
+		.apply( (WritableImage)editImagePane.getImageUtils().getImage(), type );
+		
+		this.editImagePane.update();
+		this.setHasUnsavedChanges(true);
+	}
+	/*public void applyMode( int windowSize ) {
+		new GaussianFilter()
+//		.setOptions( windowSize )
+		.apply( (WritableImage)editImagePane.getImageUtils().getImage() );
+		
+		this.editImagePane.update();
+		this.setHasUnsavedChanges(true);
+	}*/
+	
+	/* */
+	
+//	public void applyMode( int windowSize ) {
+//		new BorderDetectFilter()
+//		.apply( (WritableImage)editImagePane.getImageUtils().getImage() );
+//		
+//		this.editImagePane.update();
+//		this.setHasUnsavedChanges(true);
+//	}
 	
 	/* **** Filters  **** */
 	

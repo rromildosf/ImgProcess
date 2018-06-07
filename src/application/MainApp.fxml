@@ -79,6 +79,14 @@
                   <MenuItem fx:id="meanItem" mnemonicParsing="false" onAction="#meanAction" text="Mean" />
                   <MenuItem fx:id="medianItem" mnemonicParsing="false" onAction="#medianAction" text="Median" />
                   <MenuItem fx:id="modeItem" mnemonicParsing="false" onAction="#modeAction" text="Mode" />
+                  <MenuItem fx:id="gaussianItem" mnemonicParsing="false" onAction="#onGaussian" text="Gaussian" />
+                  <Menu mnemonicParsing="false" text="Edge Detect">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#onEdge1" text="Filter 1" />
+                      <MenuItem mnemonicParsing="false" onAction="#onEdge2" text="Filter 2" />
+                        <MenuItem mnemonicParsing="false" onAction="#onEdge3" text="Filter 3" />
+                    </items>
+                  </Menu>
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">

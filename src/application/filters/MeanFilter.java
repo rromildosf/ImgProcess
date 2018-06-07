@@ -1,6 +1,5 @@
 package application.filters;
 
-import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -12,23 +11,22 @@ public class MeanFilter {
 	public MeanFilter apply( WritableImage image ) {
 		PixelWriter pw = image.getPixelWriter();
 		
-		
+		long t = System.currentTimeMillis();
 		for( int i = 0; i < image.getWidth(); i++ ) {
 			
 			for( int j = 0; j < image.getHeight(); j++ ) {
 				
-				pw.setColor(i, j, getAverage(i, j, image) );
+				pw.setColor(i, j, getAverage(i, j, image.getWidth(), image.getHeight(), image.getPixelReader() ) );
 				
 			}
 			
 		}
+		System.out.println( System.currentTimeMillis() - t);
 		return this;
 	}
 	
 	
-	private Color getAverage( int i, int j, WritableImage img ) {
-		PixelReader pr = img.getPixelReader();
-		
+	private Color getAverage(int i, int j, double width, double height, PixelReader pr ) {
 		
 		int m, n;
 		int minus = (int)(maskSize/2.0);
@@ -44,31 +42,14 @@ public class MeanFilter {
 		int sumP = 0;
 		
 		
-		Color [] colors = Utils.getSubImage(i, j, maskSize, img);
+		Color [] colors = Utils.getSubImage(i, j, maskSize, width, height, pr );
 		for( int k = 0; k < colors.length; k++ ) {
 			c = colors[k];
-			System.out.println(k);
 			sumR += c.getRed();
 			sumG += c.getGreen();
 			sumB += c.getBlue();
 			sumP++;
 		}
-		
-//		for( ; m <= i + minus && m < img.getWidth(); m++ ) {	
-//
-//			for( int k = n; k <= j + minus && k < img.getHeight(); k++ ) {
-//
-//				c = pr.getColor(m, k);
-//				
-//				sumR += c.getRed();
-//				sumG += c.getGreen();
-//				sumB += c.getBlue();
-//				sumP++;
-//				
-//				
-//			}
-//			
-//		}
 		
 		return new Color( sumR/sumP, sumG/sumP, sumB/sumP, 1);
 	
